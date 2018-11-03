@@ -1,0 +1,200 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deep imitation</title>
+    <style>
+    body{
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    button {
+        padding: 8px 16px;
+    }
+
+    pre {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    video {
+        width: 100%;
+    }
+
+    .option {
+        margin-bottom: 8px;
+    }
+
+    #media {
+        max-width: 1280px;
+    }
+
+    .option {
+        display: none
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        flex-wrap: wrap;
+        width: 10vw;
+        margin: 0 auto;
+        /* min-height: 100vh; */
+    }
+
+    .container-n {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        flex-wrap: wrap;
+        margin: 0 auto;
+        flex-direction: row;
+    }
+
+    .btn {
+        flex: 1 1 auto;
+        margin: 10px;
+        padding: 30px;
+        text-align: center;
+        text-transform: uppercase;
+        transition: 0.5s;
+        background-size: 200% auto;
+        color: white;
+        /* text-shadow: 0px 0px 10px rgba(0,0,0,0.2);*/
+        box-shadow: 0 0 20px #eee;
+        border-radius: 10px;
+    }
+
+    .btn:hover {
+        background-position: right center; /* change the direction of the change here */
+    }
+
+    .btn-1 {
+    background-image: linear-gradient(to right, #f6d365 0%, #fda085 51%, #f6d365 100%);
+    }
+
+    .btn-2 {
+    background-image: linear-gradient(to right, #fbc2eb 0%, #a6c1ee 51%, #fbc2eb 100%);
+    }
+
+    .btn-3 {
+    background-image: linear-gradient(to right, #84fab0 0%, #8fd3f4 51%, #84fab0 100%);
+    }
+
+    .btn-4 {
+    background-image: linear-gradient(to right, #a1c4fd 0%, #c2e9fb 51%, #a1c4fd 100%);
+    }
+
+    .btn-5 {
+    background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 51%, #ffecd2 100%);
+    }
+
+    video {
+        width: 512px;
+        height: 512px;
+        background: #000;
+        margin: 20px;
+    }
+    body > h2 {
+        display: flex;
+        justify-content: center;
+        margin: 20px;
+        font-family: Arial;
+        font-size: 28px;
+        color: #000;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+    }
+
+    </style>
+</head>
+<body>
+
+<h2>Deep Imitation</h2>
+<div class="container">
+    <a class="btn btn-1" id="start" onclick="start()">Dance!</a>
+    <a class="btn btn-1" id="stop" style="display: none" onclick="stop()">Stop</a>
+    <!-- <a class="btn btn-3">Hover me</a>  -->
+    <!-- <a class="btn btn-4">Hover me</a>  -->
+    <!-- <a class="btn btn-5">Hover me</a> -->
+  </div>
+<div class="option">
+    <input id="use-datachannel" checked="checked" type="checkbox"/>
+    <label for="use-datachannel">Use datachannel</label>
+</div>
+<div class="option">
+    <input id="use-audio" type="checkbox"/>
+    <label for="use-audio">Use audio</label>
+</div>
+<div class="option">
+    <input id="use-video" checked="checked" type="checkbox"/>
+    <label for="use-video">Use video</label>
+    <select id="video-resolution">
+        <option value="" selected>Default resolution</option>
+        <option value="320x240">320x240</option>
+        <option value="640x480">640x480</option>
+        <option value="960x540">960x540</option>
+        <option value="1280x720">1280x720</option>
+    </select>
+    <select id="video-transform">
+        <option value="none" selected>Dance</option>
+        <option value="edges">Edge detection</option>
+        <option value="rotate">Rotate</option>
+    </select>
+    <select id="video-codec">
+        <option value="default" selected>Default codec</option>
+        <option value="VP8/90000">VP8/90000</option>
+        <option value="H264/90000">H264/90000</option>
+    </select>
+</div>
+
+<!-- <button id="start" onclick="start()">Start</button> -->
+<!-- <button id="stop" style="display: none" onclick="stop()">Stop</button> -->
+<div class="container-n">
+    <!-- <div>1</div> -->
+    <video id="video" autoplay="true"></video>
+    <!-- <div>1</div> -->
+    <video id="video_2" autoplay="true"></video>
+</div>
+<div id="media" style="display: none">
+    <!-- <h2>Media</h2>
+
+    <audio id="audio" autoplay="true"></audio>
+    <video id="video" autoplay="true"></video> -->
+</div>
+
+<div id="media_2" style="display: none">
+    <!-- <h2>Original</h2>
+
+    <video id="video_2" autoplay="true"></video> -->
+</div>
+
+<h2 style="display: none">Data channel</h2>
+<pre style="display: none" id="data-channel" style="height: 200px;"></pre>
+
+<h2 style="display: none" >SDP</h2>
+
+<h3 style="display: none" >Offer</h3>
+<pre style="display: none" id="offer-sdp"></pre>
+
+<h3 style="display: none" >Answer</h3>
+<pre style="display: none" id="answer-sdp"></pre>
+
+<h2>By SJTU Baidu Club</h2>
+
+<h3>State</h3>
+<p>
+    ICE gathering state: <span id="ice-gathering-state"></span>
+</p>
+<p>
+    ICE connection state: <span id="ice-connection-state"></span>
+</p>
+<p>
+    Signaling state: <span id="signaling-state"></span>
+</p>
+
+<script src="client.js"></script>
+</body>
+</html>
