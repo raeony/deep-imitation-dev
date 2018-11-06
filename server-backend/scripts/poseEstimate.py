@@ -36,7 +36,7 @@ params["scale_number"] = 1
 params["render_threshold"] = 0.05
 # If GPU version is built, and multiple GPUs are available, set the ID here
 params["num_gpu_start"] = 0
-params["disable_blending"] = False
+params["disable_blending"] = True
 # Ensure you point to the correct path where models are located
 params["default_model_folder"] =  "../model/"
 # Construct OpenPose object allocates GPU memory
@@ -87,7 +87,7 @@ def create_label(shape, joint_list):
     elif params["model_pose"] == 'BODY_25':
         total_joint = 24
         joint_info = body25_joint_info
-    
+
     for limb_type in range(total_joint):
         joint_indices = joint_info[limb_type]
         joint_coords = joint_list[joint_indices, :2]
